@@ -49,6 +49,19 @@ function buy {
     grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
 }
 
+function login {
+    # Login here and take POST header
+    res=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain/login")
+
+    if echo "$res" | grep -q "$match"; then
+        # Isolate cookie 
+        cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
+    else
+      echo "Wrong username or password. Otherwise $domain is down."
+      exit 1
+    fi
+}
+
 
 # Input parsing
 case "$1" in
@@ -66,22 +79,17 @@ case "$1" in
         ;;
     
     b|buy)
-        # Login here and take POST header
-        ret=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain"/login);
-
-        if echo "$ret" | grep -q "$match"; then
-            # Isolate cookie 
-            cookie=$(grep -i set-cookie <<< "$ret" | cut -d"=" -f2 | cut -d";" -f1)
-        else
-          echo "Wrong username or password. Otherwise $domain is down."
-          exit 1
-        fi
-
+        login
         # Buy selected item
         buy "$2"
         ;;
 
-    a|add) 
+    a|add)
+        login
+        # Add tokens
+        res=$(curl -s -i --cookie "session=$cookie" -d "tokennumber=$2" -X POST "$domain/add_token")
+        grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
         ;;
+
     *) echo "Not a vaild command." ; exit 1 ;;
 esac
