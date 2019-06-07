@@ -4,12 +4,12 @@
 options="Options:
     help            This help menu.
     config          Prompt email and password dialog and save them to a local file.
-    buy [ITEM]      Buy something. [coffee | beer | redbull | tea]
+    buy [item]      Buy something. [coffee | beer | redbull | tea]
     add [number]    Add tokens to your wallet.
                     "
 
-if [ -f $HOME/tyt-cli/user ]; then
-    source $HOME/tyt-cli/user
+if [ -f ./user ]; then
+    source ./user
 elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
         continue
 else
