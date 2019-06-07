@@ -1,0 +1,80 @@
+#!/bin/sh
+# Take Your Token CLI
+
+options="Options:
+    help            This help menu.
+    config          Prompt email and password dialog and save them to a local file.
+    buy [option]    Buy something.
+    add [number]    Add tokens to your wallet.
+                    "
+
+if [ -f $HOME/tyt_cli/user ]; then
+    source $HOME/tyt_cli/user
+elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
+        continue
+else
+    echo "First usage. Run 'tyt config' to configure your user and password."
+    exit 1
+fi
+
+# Declare constant strings
+domain=https://takeyourtoken.necst.it
+match="302 FOUND"
+
+COFFEE="caffé"
+TEA="tea"
+REDBULL="redbull"
+BEER="beer"
+
+
+# Declare functions
+function buy {
+    res=$(curl -s -i --cookie "session=$cookie" -d "buy=$1" -X POST "$domain/buy_product")
+    grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
+}
+
+
+# Input parsing
+case "$1" in
+    h|help|"") printf "Usage: %s [options]\n\n%s\n\n" "${0##*/}" "$options"; exit 1 ;;
+    
+    c|config)
+        echo -n Email:
+        read email
+        echo -n Password: 
+        read -s password
+        echo email="$email" > user
+        echo password="$password" >> user
+        echo
+        exit 0
+        ;;
+    
+    b|buy)
+        # Login here and take POST header
+        ret=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain"/login);
+
+        if echo "$ret" | grep -q "$match"; then
+            # Isolate cookie 
+            cookie=$(grep -i set-cookie <<< "$ret" | cut -d"=" -f2 | cut -d";" -f1)
+        else
+          echo "Wrong username or password. Otherwise $domain is down."
+          exit 1
+        fi
+
+        case "$2" in
+            c|coffee)
+                buy $COFFEE
+                ;;
+            b|beer)
+                ;;
+            r|redbull)
+                ;;
+            t|tea)
+                ;;
+        esac
+        ;;
+
+    a|add) 
+        ;;
+    *) echo "Not a vaild command." ; exit 1 ;;
+esac
