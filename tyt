@@ -9,8 +9,10 @@ options="Options:
     token           Shows your left tokens.
                     "
 
-if [ -f ./user ]; then
-    source ./user
+userfile="$HOME/tyt-cli/user"
+
+if [ -f $userfile ]; then
+    source $userfile
 elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
         continue
 else
