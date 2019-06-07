@@ -4,7 +4,7 @@
 options="Options:
     help            This help menu.
     config          Prompt email and password dialog and save them to a local file.
-    buy [option]    Buy something.
+    buy [item]      Buy something.
     add [number]    Add tokens to your wallet.
                     "
 
