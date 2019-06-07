@@ -8,8 +8,8 @@ options="Options:
     add [number]    Add tokens to your wallet.
                     "
 
-if [ -f $HOME/tyt_cli/user ]; then
-    source $HOME/tyt_cli/user
+if [ -f $HOME/tyt-cli/user ]; then
+    source $HOME/tyt-cli/user
 elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
         continue
 else
@@ -22,9 +22,9 @@ domain=https://takeyourtoken.necst.it
 match="302 FOUND"
 
 COFFEE="caffé"
-TEA="tea"
-REDBULL="redbull"
-BEER="beer"
+# TEA="tea"
+# REDBULL="redbull"
+# BEER="beer"
 
 
 # Declare functions
