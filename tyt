@@ -47,7 +47,7 @@ function buy {
         t|tea)
             item=$TEA
             ;;
-        *) echo "Not a vaild item." ; exit 1 ;;
+        *) echo "Not a valid item." ; exit 1 ;;
     esac
 
     res=$(curl -s -i --cookie "session=$cookie" -d "buy=$item" -X POST "$domain/buy_product")
@@ -98,10 +98,11 @@ case "$1" in
 
     t|token)
         login
+        # Get user dashboard page to retrieve token number
         res=$(curl -s -i --cookie "session=$cookie" -X GET "$domain/user_dash")
         grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
         ;;
 
 
-    *) echo "Not a vaild command." ; exit 1 ;;
+    *) echo "Not a valid command." ; exit 1 ;;
 esac
