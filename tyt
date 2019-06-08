@@ -39,8 +39,6 @@ fi
 domain=https://takeyourtoken.necst.it
 match="302 FOUND"
 
-token=0.3
-
 COFFEE="Caffé"
 TEA="The"
 REDBULL="Red bull"
