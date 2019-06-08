@@ -24,6 +24,22 @@ options="Options:
                      99.00  |   330
                     "
 
+# Check if grep is installed
+if ! command -v grep >/dev/null; then
+    echo "Install 'grep' package."
+fi
+
+# Check if curl is installed
+if ! command -v curl >/dev/null; then
+    echo "Install 'curl' package."
+fi
+
+# Check if cut is available
+if ! command -v cut >/dev/null; then
+    echo "Install 'coreutils' package."
+fi
+
+# Set userfile path
 userfile="$HOME/tyt-cli/user"
 
 if [ -f $userfile ]; then
