@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Take Your Token CLI
 
 options="Options:
@@ -93,7 +93,9 @@ function login {
 
     if echo "$res" | grep -q "$match"; then
         # Isolate cookie 
-        cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
+        # cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
+        cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-161)
+
     else
       echo "Wrong username or password. Otherwise $domain is down."
       exit 1
