@@ -94,7 +94,7 @@ function login {
     if echo "$res" | grep -q "$match"; then
         # Isolate cookie 
         # cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
-        cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-161)
+        cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-163)
 
     else
       echo "Wrong username or password. Otherwise $domain is down."
