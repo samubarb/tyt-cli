@@ -109,8 +109,8 @@ case "$1" in
         read email
         echo -n Password: 
         read -s password
-        echo email="$email" > user
-        echo password="$password" >> user
+        echo email="$email" > $userfile
+        echo password="$password" >> $userfile
         echo
         exit 0
         ;;
