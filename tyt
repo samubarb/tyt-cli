@@ -5,7 +5,8 @@ import os
 import sys
 from pathlib import Path
 import json
-from enum import Enum    
+from enum import Enum
+import getpass
 
 filename = 'user.json'
 foldername = 'tyt-cli'
@@ -27,11 +28,11 @@ class Credentials():
         return self.password
 
     def store(self, path):
-        with open(path, "w") as write_file:
+        with open(path, 'w') as write_file:
             json.dump(self.default(), write_file)
 
     def load(self, path):
-        with open(path, "r") as read_file:
+        with open(path, 'r') as read_file:
             credentials = json.load(read_file)
             self.username = credentials.get('username')
             self.password = credentials.get('password')
@@ -70,7 +71,7 @@ def switch2(arg):
     return switcher.get(arg, Command.Help)
 
 def help():
-    help_message = """Options:
+    help_message = '''Options:
     help            This help menu.
     config          Prompt email and password dialog and save them to a local file.
     buy [item]      Buy something [coffee | beer | redbull | tea].
@@ -91,14 +92,48 @@ def help():
                      20.40  |   68   
                      30.00  |   100  
                      99.00  |   330
-                    """
+    '''
     print(help_message)
-    quit()
 
 def config():
+    if sys.stdin.isatty():
+       print ('Enter credentials')
+       usr = input('Username: ')
+       pwd = getpass.getpass('Password: ')
+    else:
+       usr = sys.stdin.readline().rstrip()
+       pwd = sys.stdin.readline().rstrip()
+    credentials.username = usr
+    credentials.password = pwd
+    credentials.store(userfile)
+    print('Credentials stored in', userfile)
 
 
+def show():
+    pass
 
+def buy():
+    pass
+
+def add():
+    pass
+
+def execute(cmd):
+    if cmd == Command.Help:
+        help()
+    elif cmd == Command.Config:
+        config()
+
+if len(sys.argv) == 1:
+    help()
+    quit()
+else:
+    credentials = Credentials()
+    credentials.load(userfile)
+
+    cmd = switch1(sys.argv[1])
+    execute(cmd)
+    quit()
 
 
 # # Look for userfile existance, otherwise prompt the command to generate it.
