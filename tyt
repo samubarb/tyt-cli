@@ -5,13 +5,40 @@ import os
 import sys
 from pathlib import Path
 import json
+from enum import Enum
+
+if len(sys.argv) == 1 or sys.argv[1] == 'help':
+    help_message = """Options:
+    help            This help menu.
+    config          Prompt email and password dialog and save them to a local file.
+    buy [item]      Buy something [coffee | beer | redbull | tea].
+    add [number]    Add tokens to your wallet.
+    token           Shows your left tokens.
+
+    Welcome in Take Your Token CLI.
+    A token costs 30 eurocents. Here are some examples of euro/token change.
+                    
+                    ------------------
+                      Euro  | Tokens  
+                    --------+---------
+                      3.00  |   10   
+                      4.50  |   15   
+                      5.10  |   17   
+                      6.00  |   20   
+                     10.20  |   34   
+                     20.40  |   68   
+                     30.00  |   100  
+                     99.00  |   330
+                    """
+    print(help_message)
+    quit()
 
 filename = 'user.json'
 foldername = 'tyt-cli'
 home = Path.home()
 userfile = os.path.join(str(home), foldername, filename)
 
-class Credentials(json.JSONEncoder):
+class Credentials():
     def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
@@ -35,56 +62,43 @@ class Credentials(json.JSONEncoder):
             self.username = credentials.get('username')
             self.password = credentials.get('password')
 
-    def get(self, path):
-        pass
+class Command(Enum):
+    Config = 1
+    Show = 2
+    Buy = 3
+    Add = 4
+    Help = 5
+
+class Product(Enum):
+    Coffee = 'Caffé'
+    Beer = 'Carlsberg'
+    Tea = 'The'
+    RedBull = 'Red bull'
 
 
-if len(sys.argv) == 1 or sys.argv[1] == 'help':
-    output = """Options:
-    help            This help menu.
-    config          Prompt email and password dialog and save them to a local file.
-    buy [item]      Buy something [coffee | beer | redbull | tea].
-    add [number]    Add tokens to your wallet.
-    token           Shows your left tokens.
+def switch1(arg):
+    switcher = {
+        'config': Command.Config,
+        'show': Command.Show,
+        'buy': Command.Buy,
+        'add': Command.Add,
+        'help': Command.Help
+    }
+    return switcher.get(arg, 'Not a valid input.')
 
-    Welcome in Take Your Token CLI.
-    A token costs 30 eurocents. Here are some examples of euro/token change.
-                    
-                    ------------------
-                      Euro  | Tokens  
-                    --------+---------
-                      3.00  |   10   
-                      4.50  |   15   
-                      5.10  |   17   
-                      6.00  |   20   
-                     10.20  |   34   
-                     20.40  |   68   
-                     30.00  |   100  
-                     99.00  |   330
-                    """
-    print(output)
-    quit()
+def switch2(arg):
+    switcher = {
+        'coffee': Product.Coffee,
+        'beer': Product.Beer,
+        'tea': Product.Tea,
+        'redbull': Product.RedBull
+    }
+    return switcher.get(arg, 'Not a valid input.')
+
+print(switch1('buy'))
 
 
 
-
-# # Check if grep is installed
-# if ! command -v grep >/dev/null; then
-#     echo "Install 'grep' package."
-# fi
-
-# # Check if curl is installed
-# if ! command -v curl >/dev/null; then
-#     echo "Install 'curl' package."
-# fi
-
-# # Check if cut is available
-# if ! command -v cut >/dev/null; then
-#     echo "Install 'coreutils' package."
-# fi
-
-# # Set userfile path
-# userfile="$HOME/tyt-cli/user"
 
 # # Look for userfile existance, otherwise prompt the command to generate it.
 # if [ -f $userfile ]; then
