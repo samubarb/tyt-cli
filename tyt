@@ -1,7 +1,46 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 # Take Your Token CLI
 
-options="Options:
+import os
+import sys
+from pathlib import Path
+import json
+
+filename = 'user.json'
+foldername = 'tyt-cli'
+home = Path.home()
+userfile = os.path.join(str(home), foldername, filename)
+
+class Credentials(json.JSONEncoder):
+    def __init__(self, username=None, password=None):
+        self.username = username
+        self.password = password
+
+    def default(self):
+        return self.__dict__
+
+    def username(self):
+        return self.username
+
+    def password(self):
+        return self.password
+
+    def store(self, path):
+        with open(path, "w") as write_file:
+            json.dump(self.default(), write_file)
+
+    def load(self, path):
+        with open(path, "r") as read_file:
+            credentials = json.load(read_file)
+            self.username = credentials.get('username')
+            self.password = credentials.get('password')
+
+    def get(self, path):
+        pass
+
+
+if len(sys.argv) == 1 or sys.argv[1] == 'help':
+    output = """Options:
     help            This help menu.
     config          Prompt email and password dialog and save them to a local file.
     buy [item]      Buy something [coffee | beer | redbull | tea].
@@ -22,120 +61,125 @@ options="Options:
                      20.40  |   68   
                      30.00  |   100  
                      99.00  |   330
-                    "
-
-# Check if grep is installed
-if ! command -v grep >/dev/null; then
-    echo "Install 'grep' package."
-fi
-
-# Check if curl is installed
-if ! command -v curl >/dev/null; then
-    echo "Install 'curl' package."
-fi
-
-# Check if cut is available
-if ! command -v cut >/dev/null; then
-    echo "Install 'coreutils' package."
-fi
-
-# Set userfile path
-userfile="$HOME/tyt-cli/user"
-
-# Look for userfile existance, otherwise prompt the command to generate it.
-if [ -f $userfile ]; then
-    source $userfile
-elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
-        continue
-else
-    echo "First usage. Run 'tyt config' to configure your user and password."
-    exit 1
-fi
-
-# Declare constant strings
-domain=https://takeyourtoken.necst.it
-match="302 FOUND"
-
-# Declare TYT items names used in POST messages
-COFFEE="Caffé"
-TEA="The"
-REDBULL="Red bull"
-BEER="Carlsberg"
+                    """
+    print(output)
+    quit()
 
 
-# Function to buy an item between coffee, beer, redbull or tea
-function buy {
-    case "$1" in
-        c|coffee)
-            item=$COFFEE
-            ;;
-        b|beer)
-            item=$BEER
-            ;;
-        r|redbull)
-            item=$REDBULL
-            ;;
-        t|tea)
-            item=$TEA
-            ;;
-        *) echo "Not a valid item." ; exit 1 ;;
-    esac
 
-    # Performin POST request to buy an intem using $cookie generated from login
-    res=$(curl -s -i --cookie "session=$cookie" -d "buy=$item" -X POST "$domain/buy_product")
-    grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-}
 
-# Function to login and save the session $cookie
-function login {
-    # Login here and take POST header
-    res=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain/login")
+# # Check if grep is installed
+# if ! command -v grep >/dev/null; then
+#     echo "Install 'grep' package."
+# fi
 
-    if echo "$res" | grep -q "$match"; then
-        # Isolate cookie 
-        # cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
-        cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-163)
+# # Check if curl is installed
+# if ! command -v curl >/dev/null; then
+#     echo "Install 'curl' package."
+# fi
 
-    else
-      echo "Wrong username or password. Otherwise $domain is down."
-      exit 1
-    fi
-}
+# # Check if cut is available
+# if ! command -v cut >/dev/null; then
+#     echo "Install 'coreutils' package."
+# fi
 
-# Input parsing
-case "$1" in
-    h|help|"") printf "Usage: %s [options]\n\n%s\n\n" "${0##*/}" "$options"; exit 1 ;;
+# # Set userfile path
+# userfile="$HOME/tyt-cli/user"
+
+# # Look for userfile existance, otherwise prompt the command to generate it.
+# if [ -f $userfile ]; then
+#     source $userfile
+# elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
+#         continue
+# else
+#     echo "First usage. Run 'tyt config' to configure your user and password."
+#     exit 1
+# fi
+
+# # Declare constant strings
+# domain=https://takeyourtoken.necst.it
+# match="302 FOUND"
+
+# # Declare TYT items names used in POST messages
+# COFFEE="Caffé"
+# TEA="The"
+# REDBULL="Red bull"
+# BEER="Carlsberg"
+
+
+# # Function to buy an item between coffee, beer, redbull or tea
+# function buy {
+#     case "$1" in
+#         c|coffee)
+#             item=$COFFEE
+#             ;;
+#         b|beer)
+#             item=$BEER
+#             ;;
+#         r|redbull)
+#             item=$REDBULL
+#             ;;
+#         t|tea)
+#             item=$TEA
+#             ;;
+#         *) echo "Not a valid item." ; exit 1 ;;
+#     esac
+
+#     # Performin POST request to buy an intem using $cookie generated from login
+#     res=$(curl -s -i --cookie "session=$cookie" -d "buy=$item" -X POST "$domain/buy_product")
+#     grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
+# }
+
+# # Function to login and save the session $cookie
+# function login {
+#     # Login here and take POST header
+#     res=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain/login")
+
+#     if echo "$res" | grep -q "$match"; then
+#         # Isolate cookie 
+#         # cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
+#         cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-163)
+
+#     else
+#       echo "Wrong username or password. Otherwise $domain is down."
+#       exit 1
+#     fi
+# }
+
+# # Input parsing
+# case "$1" in
+#     h|help|"") printf "Usage: %s [options]\n\n%s\n\n" "${0##*/}" "$options"; exit 1 ;;
     
-    c|config)
-        echo -n Email:
-        read email
-        echo -n Password: 
-        read -s password
-        echo email="$email" > $userfile
-        echo password="$password" >> $userfile
-        echo
-        exit 0
-        ;;
+#     c|config)
+#         echo -n Email:
+#         read email
+#         echo -n Password: 
+#         read -s password
+#         echo email="$email" > $userfile
+#         echo password="$password" >> $userfile
+#         echo
+#         exit 0
+#         ;;
     
-    b|buy)
-        login
-        # Buy selected item
-        buy "$2"
-        ;;
+#     b|buy)
+#         login
+#         # Buy selected item
+#         buy "$2"
+#         ;;
 
-    a|add)
-        login
-        # Add tokens
-        res=$(curl -s -i --cookie "session=$cookie" -d "tokennumber=$2" -X POST "$domain/add_token")
-        grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-        ;;
+#     a|add)
+#         login
+#         # Add tokens
+#         res=$(curl -s -i --cookie "session=$cookie" -d "tokennumber=$2" -X POST "$domain/add_token")
+#         grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
+#         ;;
 
-    t|token)
-        login
-        # Get user dashboard page to retrieve token number
-        res=$(curl -s -i --cookie "session=$cookie" -X GET "$domain/user_dash")
-        grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-        ;;
+#     t|token)
+#         login
+#         # Get user dashboard page to retrieve token number
+#         res=$(curl -s -i --cookie "session=$cookie" -X GET "$domain/user_dash")
+#         grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
+#         ;;
 
-    *) echo "Not a valid command." ; exit 1 ;;
-esac
+#     *) echo "Not a valid command." ; exit 1 ;;
+# esac
