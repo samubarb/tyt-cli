@@ -7,11 +7,13 @@ from pathlib import Path
 import json
 from enum import Enum
 import getpass
+import requests
 
 filename = 'user.json'
 foldername = 'tyt-cli'
 home = Path.home()
 userfile = os.path.join(str(home), foldername, filename)
+domain='https://takeyourtoken.necst.it'
 
 class Credentials():
     def __init__(self, username=None, password=None):
@@ -109,8 +111,12 @@ def config():
     print('Credentials stored in', userfile)
 
 
-def show():
+def login(): # TODO
     pass
+
+
+def show():
+    req = request.get()
 
 def buy():
     pass
@@ -136,25 +142,11 @@ else:
     quit()
 
 
-# # Look for userfile existance, otherwise prompt the command to generate it.
-# if [ -f $userfile ]; then
-#     source $userfile
-# elif [ "$1" == "c" ] || [ "$1" == "config" ]; then
-#         continue
-# else
-#     echo "First usage. Run 'tyt config' to configure your user and password."
-#     exit 1
-# fi
 
 # # Declare constant strings
 # domain=https://takeyourtoken.necst.it
 # match="302 FOUND"
 
-# # Declare TYT items names used in POST messages
-# COFFEE="Caffé"
-# TEA="The"
-# REDBULL="Red bull"
-# BEER="Carlsberg"
 
 
 # # Function to buy an item between coffee, beer, redbull or tea
