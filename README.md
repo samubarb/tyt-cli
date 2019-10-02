@@ -18,3 +18,4 @@ You, of course, also need a valid and activated profile on <https://takeyourtoke
  
 ## Usage
 You can see how to `buy` things, `add` tokens or show your token amount by running `tyt help`, it's pretty self explicative.
+I also suggest to add an alias to your shell config to be able to call `tyt` from everywhere on your system. You can add the line `alias tyt="~/PATH-TO-TYT-FOLDER/tyt"` to `~/.bashrc` or `~/.zshrc`, depending on wich shell you are using. If you cloned this repo in your home, you can go with `alias tyt="~/tyt-cli/tyt"`.
