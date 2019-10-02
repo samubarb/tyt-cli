@@ -9,6 +9,7 @@ from enum import Enum
 import getpass
 import requests
 import urllib, http.cookiejar
+import re
 
 filename = 'user.json'
 foldername = 'tyt-cli'
@@ -49,8 +50,8 @@ class Credentials():
             cj = http.cookiejar.CookieJar()
             opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
             login_data = urllib.parse.urlencode({  \
-                'email': credentials.username,  \
-                'password': credentials.password \
+                'email': self.username,   \
+                'password': self.password \
                 }).encode(encoding)
             opener.open(login_url, login_data)
             self.opener = opener
@@ -117,33 +118,33 @@ def help():
 
 def config():
     if sys.stdin.isatty():
-       print ('Enter credentials')
+       print ('Enter user')
        usr = input('Username: ')
        pwd = getpass.getpass('Password: ')
     else:
        usr = sys.stdin.readline().rstrip()
        pwd = sys.stdin.readline().rstrip()
-    credentials.username = usr
-    credentials.password = pwd
-    credentials.store(userfile)
+    user.username = usr
+    user.password = pwd
+    user.store(userfile)
     print('Credentials stored in', userfile)
 
 
-def login():
-    cj = http.cookiejar.CookieJar()
-    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
-    login_data = urllib.parse.urlencode({  \
-        'email': credentials.username,  \
-        'password': credentials.password \
-        }).encode(encoding)
-    opener.open(login_url, login_data)
-    return opener
+# def login():
+#     cj = http.cookiejar.CookieJar()
+#     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
+#     login_data = urllib.parse.urlencode({  \
+#         'email': user.username,  \
+#         'password': user.password \
+#         }).encode(encoding)
+#     opener.open(login_url, login_data)
+#     return opener
 
-def show(opener):
-    resp = opener.open(dash_url)
-    print(resp.read())
-    # resp = opener.open(dash_url)
-    # print(resp.read())
+def show():
+    resp = user.opener.open(dash_url)
+    resp = str(resp.read())
+    res = re.search('You have(.*)left!', resp)
+    print(res.group())
 
 def buy():
     pass
@@ -157,7 +158,7 @@ def execute(cmd):
     elif cmd == Command.Config:
         config()
     elif cmd == Command.Show:
-        show(login())
+        show()
 
 
 
@@ -166,8 +167,8 @@ if len(sys.argv) == 1:
     help()
     quit()
 else:
-    credentials = Credentials()
-    credentials.load(userfile)
+    user = Credentials()
+    user.load(userfile)
 
     cmd = switch1(sys.argv[1])
     execute(cmd)
