@@ -159,9 +159,27 @@ def buy():
         print('Not enough arguments.')
         quit()
 
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 def add():
-    user.login()
-    pass
+    if len_args > 2:
+        token = sys.argv[2]
+        if not is_number(token):
+            print("You have to provide an integer number of tokens.")
+            quit()
+        else:
+            data = urllib.parse.urlencode({'tokennumber': token}).encode(encoding)
+            user.login()
+            user.opener.open(add_url, data)
+            show()
+    else:
+        print('Not enough arguments.')
+        quit()
 
 def execute(cmd):
     if cmd == Command.Help:
