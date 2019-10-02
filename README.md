@@ -9,7 +9,7 @@ It's a CLI script that nobody asked, to increase users' hipster ego and permits 
 Another example is to run a `tyt buy coffee` as soon your machine starts up. This can be done within every OS launching the command as a *startup application*.
 
 ## Dependencies
-Python, either`python2` or `python3`. If never installed before go with `python3`:
+Python3 is required, Python2 is not supported.
 - Debian based distro's install: `sudo apt install python3`
 - Arch based distro's install: `sudo pacman -S python3`
 - MacOS X users: `brew install python3`
