@@ -37,11 +37,12 @@ class Credentials():
         return self.password
 
     def store(self, path):
-        with open(path, 'w') as write_file:
+        with open(path, 'w+') as write_file:
             json.dump(self.toDict(), write_file)
 
     def load(self, path):
-        with open(path, 'r') as read_file:
+        try:
+            read_file = open(path, 'r')
             credentials = json.load(read_file)
             self.username = credentials.get('username')
             self.password = credentials.get('password')
@@ -53,6 +54,8 @@ class Credentials():
                 }).encode(encoding)
             opener.open(login_url, login_data)
             self.opener = opener
+        except FileNotFoundError:
+            print ('First usage. Run \'tyt config\' to configure your user and password.')
 
 class Command(Enum):
     Config = 1
