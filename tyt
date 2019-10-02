@@ -25,9 +25,10 @@ class Credentials():
     def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
+        self.opener = None
 
-    def default(self):
-        return self.__dict__
+    def toDict(self):
+        return {'username':self.username, 'password':self.password}
 
     def username(self):
         return self.username
@@ -37,13 +38,21 @@ class Credentials():
 
     def store(self, path):
         with open(path, 'w') as write_file:
-            json.dump(self.default(), write_file)
+            json.dump(self.toDict(), write_file)
 
     def load(self, path):
         with open(path, 'r') as read_file:
             credentials = json.load(read_file)
             self.username = credentials.get('username')
             self.password = credentials.get('password')
+            cj = http.cookiejar.CookieJar()
+            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
+            login_data = urllib.parse.urlencode({  \
+                'email': credentials.username,  \
+                'password': credentials.password \
+                }).encode(encoding)
+            opener.open(login_url, login_data)
+            self.opener = opener
 
 class Command(Enum):
     Config = 1
@@ -124,7 +133,7 @@ def login():
         'email': credentials.username,  \
         'password': credentials.password \
         }).encode(encoding)
-    resp = opener.open(login_url, login_data)
+    opener.open(login_url, login_data)
     return opener
 
 def show(opener):
