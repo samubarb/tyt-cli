@@ -13,6 +13,8 @@ import re
 
 filename = 'user.json'
 foldername = 'tyt-cli'
+
+len_args = len(sys.argv)
 home = Path.home()
 userfile = os.path.join(str(home), foldername, filename)
 domain='https://takeyourtoken.necst.it'
@@ -47,16 +49,22 @@ class Credentials():
             credentials = json.load(read_file)
             self.username = credentials.get('username')
             self.password = credentials.get('password')
-            cj = http.cookiejar.CookieJar()
-            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
-            login_data = urllib.parse.urlencode({  \
-                'email': self.username,   \
-                'password': self.password \
-                }).encode(encoding)
-            opener.open(login_url, login_data)
-            self.opener = opener
         except FileNotFoundError:
             print ('First usage. Run \'tyt config\' to configure your user and password.')
+
+    def login(self):
+        cj = http.cookiejar.CookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
+        login_data = urllib.parse.urlencode({  \
+            'email': self.username,   \
+            'password': self.password \
+            }).encode(encoding)
+        try:
+            opener.open(login_url, login_data)
+            self.opener = opener
+        except urllib.request.HTTPError as err:
+            print('HTTP Error', err.code)
+            quit()
 
 class Command(Enum):
     Config = 1
@@ -70,6 +78,7 @@ class Product(Enum):
     Beer = 'Carlsberg'
     Tea = 'The'
     RedBull = 'Red bull'
+    Invalid = None
 
 
 def switch1(arg):
@@ -89,7 +98,7 @@ def switch2(arg):
         'tea'       : Product.Tea,
         'redbull'   : Product.RedBull
     }
-    return switcher.get(arg, Command.Help)
+    return switcher.get(arg, Product.Invalid)
 
 def help():
     help_message = '''Options:
@@ -129,27 +138,29 @@ def config():
     user.store(userfile)
     print('Credentials stored in', userfile)
 
-
-# def login():
-#     cj = http.cookiejar.CookieJar()
-#     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
-#     login_data = urllib.parse.urlencode({  \
-#         'email': user.username,  \
-#         'password': user.password \
-#         }).encode(encoding)
-#     opener.open(login_url, login_data)
-#     return opener
-
 def show():
-    resp = user.opener.open(dash_url)
+    resp = user.opener.open(add_url) #add_url slightly faster than dash_url
     resp = str(resp.read())
     res = re.search('You have(.*)left!', resp)
     print(res.group())
 
 def buy():
-    pass
+    if len_args > 2:
+        prod = switch2(sys.argv[2])
+        if prod == Product.Invalid:
+            print("The product is invalid.")
+            quit()
+        else:
+            data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
+            user.login()
+            user.opener.open(buy_url, data)
+            show()
+    else:
+        print('Not enough arguments.')
+        quit()
 
 def add():
+    user.login()
     pass
 
 def execute(cmd):
@@ -158,15 +169,21 @@ def execute(cmd):
     elif cmd == Command.Config:
         config()
     elif cmd == Command.Show:
+        user.login()
         show()
+    elif cmd == Command.Buy:
+        user.login()
+        buy()
+    elif cmd == Command.Add:
+        add()
 
 
 
-
-if len(sys.argv) == 1:
+# Start script
+if len_args == 1:
     help()
     quit()
-else:
+elif len_args > 1:
     user = Credentials()
     user.load(userfile)
 
