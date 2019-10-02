@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Take Your Token CLI
 
 import os
@@ -8,12 +8,18 @@ import json
 from enum import Enum
 import getpass
 import requests
+import urllib, http.cookiejar
 
 filename = 'user.json'
 foldername = 'tyt-cli'
 home = Path.home()
 userfile = os.path.join(str(home), foldername, filename)
 domain='https://takeyourtoken.necst.it'
+login_url = urllib.parse.urljoin(domain, 'login')
+buy_url = urllib.parse.urljoin(domain, 'buy_product')
+add_url = urllib.parse.urljoin(domain, 'add_token')
+dash_url = urllib.parse.urljoin(domain, 'user_dash')
+encoding = 'utf-8'
 
 class Credentials():
     def __init__(self, username=None, password=None):
@@ -111,12 +117,21 @@ def config():
     print('Credentials stored in', userfile)
 
 
-def login(): # TODO
-    pass
+def login():
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=cj))
+    login_data = urllib.parse.urlencode({  \
+        'email': credentials.username,  \
+        'password': credentials.password \
+        }).encode(encoding)
+    resp = opener.open(login_url, login_data)
+    return opener
 
-
-def show():
-    req = request.get()
+def show(opener):
+    resp = opener.open(dash_url)
+    print(resp.read())
+    # resp = opener.open(dash_url)
+    # print(resp.read())
 
 def buy():
     pass
@@ -129,6 +144,11 @@ def execute(cmd):
         help()
     elif cmd == Command.Config:
         config()
+    elif cmd == Command.Show:
+        show(login())
+
+
+
 
 if len(sys.argv) == 1:
     help()
