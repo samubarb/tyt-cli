@@ -9,10 +9,10 @@ It's a CLI script that nobody asked, to increase users' hipster ego and permits 
 Another example is to run a `tyt buy coffee` as soon your machine starts up. This can be done within every OS launching the command as a *startup application*.
 
 ## Dependencies
-Python3 is required, Python2 is not supported.
-- Debian based distro's install: `sudo apt install python3`
-- Arch based distro's install: `sudo pacman -S python3`
-- MacOS X users: `brew install python3`
+Python3.7 or above is required, lower versions of Python will not work.
+- Debian based distro's install: `sudo apt install python3.7`
+- Arch based distro's install: `sudo pacman -S python3.7`
+- MacOS X users: `brew install python3.7`
  
 You, of course, also need a valid and activated profile on <https://takeyourtoken.necst.it/>.
  
