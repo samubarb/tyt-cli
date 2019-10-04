@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python
 # Take Your Token CLI
 
 import os
@@ -10,6 +10,10 @@ import getpass
 import requests
 import urllib, http.cookiejar
 import re
+
+min_python = (3, 7)
+if sys.version_info < min_python:
+    quit("Python %s.%s or later is required." % min_python)
 
 filename = 'user.json'
 foldername = 'tyt-cli'
@@ -63,8 +67,7 @@ class Credentials():
             opener.open(login_url, login_data)
             self.opener = opener
         except urllib.request.HTTPError as err:
-            print('HTTP Error', err.code)
-            quit()
+            quit('HTTP Error', err.code)
 
 class Command(Enum):
     Config = 1
@@ -123,7 +126,7 @@ def help():
                      30.00  |   100  
                      99.00  |   330
     '''
-    print(help_message)
+    quit(help_message)
 
 def config():
     if sys.stdin.isatty():
@@ -148,16 +151,15 @@ def buy():
     if len_args > 2:
         prod = switch2(sys.argv[2])
         if prod == Product.Invalid:
-            print("The product is invalid.")
-            quit()
+            quit("The product is invalid.")
+            
         else:
             data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
             user.login()
             user.opener.open(buy_url, data)
             show()
     else:
-        print('Not enough arguments.')
-        quit()
+        quit('Not enough arguments.')
 
 def is_number(s):
     try:
@@ -170,16 +172,14 @@ def add():
     if len_args > 2:
         token = sys.argv[2]
         if not is_number(token):
-            print("You have to provide an integer number of tokens.")
-            quit()
+            quit("You have to provide an integer number of tokens.")
         else:
             data = urllib.parse.urlencode({'tokennumber': token}).encode(encoding)
             user.login()
             user.opener.open(add_url, data)
             show()
     else:
-        print('Not enough arguments.')
-        quit()
+        quit('Not enough arguments.')
 
 def execute(cmd):
     if cmd == Command.Help:
@@ -190,106 +190,18 @@ def execute(cmd):
         user.login()
         show()
     elif cmd == Command.Buy:
-        user.login()
         buy()
     elif cmd == Command.Add:
         add()
 
 
-
 # Start script
 if len_args == 1:
     help()
-    quit()
 elif len_args > 1:
     user = Credentials()
     user.load(userfile)
 
     cmd = switch1(sys.argv[1])
     execute(cmd)
-    quit()
-
-
-
-# # Declare constant strings
-# domain=https://takeyourtoken.necst.it
-# match="302 FOUND"
-
-
-
-# # Function to buy an item between coffee, beer, redbull or tea
-# function buy {
-#     case "$1" in
-#         c|coffee)
-#             item=$COFFEE
-#             ;;
-#         b|beer)
-#             item=$BEER
-#             ;;
-#         r|redbull)
-#             item=$REDBULL
-#             ;;
-#         t|tea)
-#             item=$TEA
-#             ;;
-#         *) echo "Not a valid item." ; exit 1 ;;
-#     esac
-
-#     # Performin POST request to buy an intem using $cookie generated from login
-#     res=$(curl -s -i --cookie "session=$cookie" -d "buy=$item" -X POST "$domain/buy_product")
-#     grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-# }
-
-# # Function to login and save the session $cookie
-# function login {
-#     # Login here and take POST header
-#     res=$(curl -s -i -d "email=$email&password=$password" -X POST "$domain/login")
-
-#     if echo "$res" | grep -q "$match"; then
-#         # Isolate cookie 
-#         # cookie=$(grep -i set-cookie <<< "$res" | cut -d"=" -f2 | cut -d";" -f1)
-#         cookie=$(grep Set-Cookie <<< $res | cut -c21- | cut -c-163)
-
-#     else
-#       echo "Wrong username or password. Otherwise $domain is down."
-#       exit 1
-#     fi
-# }
-
-# # Input parsing
-# case "$1" in
-#     h|help|"") printf "Usage: %s [options]\n\n%s\n\n" "${0##*/}" "$options"; exit 1 ;;
-    
-#     c|config)
-#         echo -n Email:
-#         read email
-#         echo -n Password: 
-#         read -s password
-#         echo email="$email" > $userfile
-#         echo password="$password" >> $userfile
-#         echo
-#         exit 0
-#         ;;
-    
-#     b|buy)
-#         login
-#         # Buy selected item
-#         buy "$2"
-#         ;;
-
-#     a|add)
-#         login
-#         # Add tokens
-#         res=$(curl -s -i --cookie "session=$cookie" -d "tokennumber=$2" -X POST "$domain/add_token")
-#         grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-#         ;;
-
-#     t|token)
-#         login
-#         # Get user dashboard page to retrieve token number
-#         res=$(curl -s -i --cookie "session=$cookie" -X GET "$domain/user_dash")
-#         grep -i "token left" <<< $res | cut -d"!" -f1 | cut -d">" -f3
-#         ;;
-
-#     *) echo "Not a valid command." ; exit 1 ;;
-# esac
+# End script
