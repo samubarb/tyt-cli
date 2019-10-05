@@ -186,13 +186,15 @@ def execute(cmd):
         help()
     elif cmd is Command.Config:
         config()
-    elif cmd is Command.Show:
-        user.login()
-        show()
-    elif cmd is Command.Buy:
-        buy()
-    elif cmd is Command.Add:
-        add()
+    else:
+        user.load(userfile)
+        if cmd is Command.Show:
+            user.login()
+            show()
+        elif cmd is Command.Buy:
+            buy()
+        elif cmd is Command.Add:
+            add()
 
 
 # Start script
@@ -201,7 +203,7 @@ if len_args == 1:
 elif len_args > 1:
     cmd = switch1(sys.argv[1])
     user = Credentials()
-    if cmd is not Command.Config:
-        user.load(userfile)
+    # if cmd is not Command.Config:
+        
     execute(cmd)
 # End script
