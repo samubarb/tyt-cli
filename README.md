@@ -10,12 +10,11 @@ Another example is to run a `tyt buy coffee` as soon your machine starts up. Thi
 
 ## Dependencies
 Python 3.6 or above is required an also the python module `requests` that you can easily find on `pip3` package manager.
-
 - Ubuntu and Debian-based distro: `sudo apt install python3 python3-pip`
 - Mac OSX users: `brew install python3`
 - Arch based distros: `sudo pacman -S python python-pip`
 
-And finally install `requests` through `pip`. `pip3 install --user requests` (only `pip` for Arch).
+And finally install `requests` through `pip`.
 - Ubuntu and Debian-based distro: `pip3 install --user requests`
 - Mac OSX users: `pip3 install requests` (without `--user` flag due to a bug in `brew`. It may require `sudo`)
 - Arch based distros: `pip install --user requests`
