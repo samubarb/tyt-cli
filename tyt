@@ -145,7 +145,10 @@ def show():
     resp = user.opener.open(add_url) #add_url slightly faster than dash_url
     resp = str(resp.read())
     res = re.search('You have(.*)left!', resp)
-    print(res.group())
+    try:
+        print(res.group())
+    except:
+        quit('Error: Check you credentials.')
 
 def buy():
     if len_args > 2:
