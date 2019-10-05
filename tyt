@@ -11,10 +11,6 @@ import requests
 import urllib, http.cookiejar
 import re
 
-min_python = (3, 7)
-if sys.version_info < min_python:
-    quit("Python %s.%s or later is required." % min_python)
-
 filename = 'user.json'
 foldername = 'tyt-cli'
 
@@ -154,7 +150,7 @@ def buy():
     if len_args > 2:
         prod = switch2(sys.argv[2])
         if prod == Product.Invalid:
-            quit("The product is invalid.")
+            quit('The product is invalid.')
             
         else:
             data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
@@ -175,7 +171,7 @@ def add():
     if len_args > 2:
         token = sys.argv[2]
         if not is_number(token):
-            quit("You have to provide an integer number of tokens.")
+            quit('You have to provide an integer number of tokens.')
         else:
             data = urllib.parse.urlencode({'tokennumber': token}).encode(encoding)
             user.login()
