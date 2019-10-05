@@ -182,16 +182,16 @@ def add():
         quit('Not enough arguments.')
 
 def execute(cmd):
-    if cmd == Command.Help:
+    if cmd is Command.Help:
         help()
-    elif cmd == Command.Config:
+    elif cmd is Command.Config:
         config()
-    elif cmd == Command.Show:
+    elif cmd is Command.Show:
         user.login()
         show()
-    elif cmd == Command.Buy:
+    elif cmd is Command.Buy:
         buy()
-    elif cmd == Command.Add:
+    elif cmd is Command.Add:
         add()
 
 
@@ -199,8 +199,9 @@ def execute(cmd):
 if len_args == 1:
     help()
 elif len_args > 1:
-    user = Credentials()
-    user.load(userfile)
     cmd = switch1(sys.argv[1])
+    user = Credentials()
+    if cmd is not Command.Config:
+        user.load(userfile)
     execute(cmd)
 # End script
