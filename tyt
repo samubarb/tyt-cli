@@ -54,7 +54,7 @@ class Credentials():
             self.username = credentials.get('username')
             self.password = credentials.get('password')
         except FileNotFoundError:
-            print ('First usage. Run \'tyt config\' to configure your user and password.')
+            quit('First usage. Run \'tyt config\' to configure your user and password.')
 
     def login(self):
         cj = http.cookiejar.CookieJar()
@@ -201,7 +201,6 @@ if len_args == 1:
 elif len_args > 1:
     user = Credentials()
     user.load(userfile)
-
     cmd = switch1(sys.argv[1])
     execute(cmd)
 # End script
