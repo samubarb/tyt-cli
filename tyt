@@ -9,6 +9,7 @@ import re
 import sys
 import urllib
 from enum import Enum
+from decimal import Decimal
 
 # Folder and files paths
 filename = 'user.json'
@@ -74,6 +75,7 @@ class Command(Enum):
     Buy = 3
     Add = 4
     Help = 5
+    Convert = 6
 
 
 class Product(Enum):
@@ -90,6 +92,7 @@ def switch1(arg):
         'show': Command.Show,
         'buy': Command.Buy,
         'add': Command.Add,
+        'convert': Command.Convert,
         'help': Command.Help
     }
     return switcher.get(arg, Command.Help)
@@ -160,7 +163,6 @@ def buy():
         prod = switch2(sys.argv[2])
         if prod == Product.Invalid:
             quit('The product is invalid.')
-
         else:
             data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
             user.login()
@@ -170,7 +172,7 @@ def buy():
         quit('Not enough arguments.')
 
 
-def is_number(s):
+def is_int(s):
     try:
         int(s)
         return True
@@ -178,16 +180,51 @@ def is_number(s):
         return False
 
 
+def is_positive_float(s):
+    try:
+        num = float(s)
+        if num >= 0.0:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+
 def add():
     if len_args > 2:
         token = sys.argv[2]
-        if not is_number(token):
+        if not is_int(token):
             quit('You have to provide an integer number of tokens.')
         else:
             data = urllib.parse.urlencode({'tokennumber': token}).encode(encoding)
             user.login()
             user.opener.open(add_url, data)
             show()
+    else:
+        quit('Not enough arguments.')
+
+
+def convert():
+    if len_args > 2:
+        euro = sys.argv[2]
+        if not is_positive_float(euro):
+            quit('You have to provide a positive float number of euros.')
+        else:
+            token_value = Decimal('0.30')
+            euro = Decimal(euro)
+            div = euro//token_value
+            mod = euro % token_value
+            if mod == 0:
+                print('{0:.2f}'.format(euro) + ' euros equal to ' + '{0:.0f}'.format(div) + ' tokens.')
+            else:
+                lower = token_value * div
+                upper = token_value * (div + 1)
+                if lower != 0.0:
+                    print('{0:.2f}'.format(lower) + ' euros -> ' + '{0:.0f}'.format(div) + ' tokens, OR')
+                print('{0:.2f}'.format(upper) + ' euros -> ' + '{0:.0f}'.format(div + 1) + ' tokens.')
+                
+
     else:
         quit('Not enough arguments.')
 
@@ -206,6 +243,8 @@ def execute(cmd):
             buy()
         elif cmd is Command.Add:
             add()
+        elif cmd is Command.Convert:
+            convert()
 
 
 # Start script
@@ -214,7 +253,5 @@ if len_args == 1:
 elif len_args > 1:
     cmd = switch1(sys.argv[1])
     user = Credentials()
-    # if cmd is not Command.Config:
-
     execute(cmd)
 # End script
