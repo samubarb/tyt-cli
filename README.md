@@ -17,8 +17,11 @@ Python 3.6 or above is required.
 You, of course, also need a valid and activated profile on <https://takeyourtoken.necst.it/>.
  
 ## Usage
-You can see how to `buy` things, `add` tokens or `show` your token amount by running `tyt help`, it's pretty self explicative.
+You can see how to `buy` things, show the item's `price`, `add` tokens or `show` your token amount by running `tyt help`, it's pretty self explicative.
 
-I also suggest to add an alias to your shell config to be able to call `tyt` from everywhere on your system.
+You can comfortably `convert` the amount of euros in your pocket into tokens, the cli will show both the lower and the upper amount of euros to end with a finite number of tokens.
+
+## Tips
+I suggest to add an alias to your shell config to be able to call `tyt` from everywhere on your system.
 You can add the line `alias tyt="~/PATH-TO-TYT-FOLDER/tyt"` to `~/.bashrc` or `~/.zshrc`, depending on wich shell you are using.
 If you cloned this repo in your home, you can pretty safely go with `alias tyt="~/tyt-cli/tyt"`.
