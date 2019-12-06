@@ -29,6 +29,9 @@ encoding = 'utf-8'
 # Number of input arguments 
 len_args = len(sys.argv)
 
+# Items limit
+items_limit = 5
+
 
 class Credentials():
     def __init__(self, username=None, password=None):
@@ -167,11 +170,21 @@ def buy():
         prod = switch2(sys.argv[2])
         if prod == Product.Invalid:
             quit('The product is invalid.')
+        if len_args == 3:
+            times = 1
         else:
-            data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
-            user.login()
+            if not is_int(sys.argv[3]):
+                quit('You have to provide an integer number of items.')
+            times = int(sys.argv[3])
+            if times > items_limit:
+                quit('You can only buy {} items.'.format(items_limit))
+
+        # Buy items
+        data = urllib.parse.urlencode({'buy': prod.value}).encode(encoding)
+        user.login()
+        for i in range(times): # Iterate on times
             user.opener.open(buy_url, data)
-            show()
+        show()
     else:
         quit('Not enough arguments.')
 
