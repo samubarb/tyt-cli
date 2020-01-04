@@ -10,6 +10,7 @@ import sys
 import urllib
 from enum import Enum
 from decimal import Decimal
+import argparse
 
 # Folder and files paths
 filename = 'user.json'
@@ -120,14 +121,16 @@ def help():
      | | (_| |   <  __/   | | (_) | |_| | |      | | (_) |   <  __/ | | |
      |_|\__,_|_|\_\___|   |_|\___/ \__,_|_|      |_|\___/|_|\_\___|_| |_|
 
-    Options:
-    help                        This help menu.
-    config                      Prompt email and password dialog and save them to a local file.
-    buy [item] [amount = 1]     Buy something [coffee | beer | redbull | tea], with an optional amount (default to 1).
-    add [number]                Add tokens to your wallet.
-    show                        Shows your left tokens.
-    convert [euros]             Euro->Tokens converter.
-    price                       Shows prices list.        
+    Usage: %s {help | config | buy | add | show | convert | price} [OPTIONS]
+
+    OPTIONS
+    help                This help menu.
+    config              Prompt email and password dialog and save them locally.
+    buy [item] [qty]    Buy something {coffee | beer | redbull | tea}.
+    add [number]        Add tokens to your wallet.
+    show                Shows your left tokens.
+    convert [euros]     Euro->Tokens converter.
+    price               Shows prices list.        
 
     Welcome in Take Your Token CLI.
     A token costs 30 eurocents. Here are some examples of euro/token change.
@@ -137,7 +140,7 @@ def help():
     ╠════════╬══════╬══════╬══════╬══════╬═══════╬═══════╬═══════╬═══════╣
     ║ Tokens ║  10  ║  14  ║  17  ║  20  ║   34  ║   68  ║  100  ║  300  ║
     ╚════════╩══════╩══════╩══════╩══════╩═══════╩═══════╩═══════╩═══════╝
-    '''
+    ''' % os.path.basename(__file__)
     quit(help_message)
 
 
