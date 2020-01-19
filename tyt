@@ -121,9 +121,9 @@ def help():
      | | (_| |   <  __/   | | (_) | |_| | |      | | (_) |   <  __/ | | |
      |_|\__,_|_|\_\___|   |_|\___/ \__,_|_|      |_|\___/|_|\_\___|_| |_|
 
-    Usage: %s {help | config | buy | add | show | convert | price} [OPTIONS]
+    Usage: %s <OPTION> [ARGS]
 
-    OPTIONS
+    OPTIONS:
     help                This help menu.
     config              Prompt email and password dialog and save them locally.
     buy [item] [qty]    Buy something {coffee | beer | redbull | tea}.
